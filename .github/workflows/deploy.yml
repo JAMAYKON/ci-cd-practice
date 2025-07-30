@@ -6,23 +6,19 @@ on:
     branches: [main, master]
     types: [completed]
 
-# Solo permite un deploy a la vez
 concurrency:
   group: pages
   cancel-in-progress: false
 
 jobs:
   deploy:
-    # Solo ejecuta si el workflow anterior fue exitoso
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     
-    # Configuración del environment para GitHub Pages
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     
-    # Permisos necesarios para GitHub Pages
     permissions:
       pages: write
       id-token: write
@@ -30,16 +26,13 @@ jobs:
       actions: read
     
     steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v4
+      - name: Download workflow artifact
+        uses: dawidd6/action-download-artifact@v3
         with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          workflow: ci.yml
           name: github-pages
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          run-id: ${{ github.event.workflow_run.id }}
-        
-      - name: Setup Pages
-        uses: actions/configure-pages@v3
-        
+          
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v3
