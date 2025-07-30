@@ -60,7 +60,6 @@ jobs:
           EOF
           
       - name: Subir artefacto para Pages
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v3
         with:
           path: ./public
-          retention-days: 1
