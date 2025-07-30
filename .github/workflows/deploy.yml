@@ -24,5 +24,3 @@ jobs:
 
       - name: Desplegar en Pages
         uses: actions/deploy-pages@v2
-
-• Haz clic en 'Commit new file' para guardarlo.
