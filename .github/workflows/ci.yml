@@ -1,40 +1,51 @@
 name: CI Pipeline
 
-on: [push]
+on: 
+  push:
+    branches: [ main, master ]  # Solo se activa en estas ramas
 
 jobs:
-  build:
+  build-and-preview:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    
     steps:
-      - name: Checkout del código
+      - name: Checkout código
         uses: actions/checkout@v4
 
-      - name: Configurar Python
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.x'
+          python-version: '3.11'  # Versión específica recomendada
 
       - name: Instalar dependencias
-        run: pip install pytest
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest
 
-      - name: Ejecutar pruebas
+      - name: Ejecutar tests
         run: pytest
 
-      - name: Generar contenido del sitio
+      - name: Construir sitio
         run: |
-          mkdir -p build
-          echo "<!DOCTYPE html>
+          mkdir -p public
+          echo "<!doctype html>
           <html>
           <head>
-            <title>Mi Sitio</title>
+            <meta charset='utf-8'>
+            <title>GitHub Pages</title>
           </head>
           <body>
-            <h1>Sitio desplegado</h1>
-            <p>Versión: ${{ github.sha }}</p>
-          </body>
-          </html>" > build/index.html
+            <h1>Despliegue exitoso</h1>
+            <p>Commit SHA: ${{ github.sha }}</p>
+            <p>Fecha: $(date)</p>
+          </html>" > public/index.html
 
-      - name: Subir artefacto para Pages
-        uses: actions/upload-pages-artifact@v2  # Versión correcta para Pages
+      - name: Subir artefacto
+        uses: actions/upload-pages-artifact@v2  # ÚNICA ACCIÓN RECOMENDADA PARA PAGES
         with:
-          path: build/
+          path: '.'  # Ruta exacta del contenido
+          retention-days: 1
