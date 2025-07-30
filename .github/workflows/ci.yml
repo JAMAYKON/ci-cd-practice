@@ -23,10 +23,18 @@ jobs:
       - name: Generar contenido del sitio
         run: |
           mkdir -p build
-          echo "<h1>Sitio desplegado</h1>" > build/index.html
-          echo "<p>Versión: ${{ github.sha }}</p>" >> build/index.html
+          echo "<!DOCTYPE html>
+          <html>
+          <head>
+            <title>Mi Sitio</title>
+          </head>
+          <body>
+            <h1>Sitio desplegado</h1>
+            <p>Versión: ${{ github.sha }}</p>
+          </body>
+          </html>" > build/index.html
 
       - name: Subir artefacto para Pages
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v2  # Versión correcta para Pages
         with:
           path: build/
