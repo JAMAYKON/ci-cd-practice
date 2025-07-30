@@ -6,6 +6,11 @@ on:
     types:
       - completed
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
   deploy:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
@@ -21,9 +26,11 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: github-pages
-          path: '.'  # Cambia si tu build sale en `dist` o `build`
+          path: './build'  # o ./dist, ./public, etc., según tu caso
 
       - name: Desplegar en Pages
+        uses: actions/deploy-pages@v2
+
         uses: actions/deploy-pages@v2
 
 
