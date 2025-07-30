@@ -1,6 +1,6 @@
 name: Deploy to GitHub Pages
 
-on:
+on: 
   workflow_run:
     workflows: ["CI Pipeline"]
     branches: [main, master]
