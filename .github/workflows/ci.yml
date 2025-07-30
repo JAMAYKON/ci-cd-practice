@@ -1,19 +1,10 @@
-name: CI + Deploy
+name: CI Pipeline
 
-on:
-  push:
-    branches:
-      - main
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+on: [push, pull_request]
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout del código
         uses: actions/checkout@v3
@@ -31,20 +22,14 @@ jobs:
         run: |
           pytest
 
-      - name: Generar sitio estático (ejemplo)
+      - name: Generar sitio estático (solo ejemplo)
         run: |
           mkdir build
-          echo "<h1>Hola desde GitHub Pages</h1>" > build/index.html
+          echo "<h1>Sitio desde CI</h1>" > build/index.html
 
-      - name: Configurar GitHub Pages
-        uses: actions/configure-pages@v3
-
-      - name: Subir archivos del sitio
+      - name: Subir artefacto para Pages
         uses: actions/upload-artifact@v4
         with:
-          name: github-pages
-          path: ./build
+          name: github-pages     # 👈 este nombre es crucial
+          path: build            # 👈 carpeta a desplegar
           retention-days: 1
-
-      - name: Desplegar en Pages
-        uses: actions/deploy-pages@v2
