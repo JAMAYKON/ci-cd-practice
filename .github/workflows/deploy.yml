@@ -3,22 +3,35 @@ name: Deploy to GitHub Pages
 on:
   workflow_run:
     workflows: ["CI Pipeline"]
-    branches: [ main, master ]
-    types: [ completed ]
+    branches: [main, master]
+    types: [completed]
 
+# Solo permite un deploy a la vez
 concurrency:
-  group: 'pages'
-  cancel-in-progress: true
+  group: pages
+  cancel-in-progress: false
 
 jobs:
   deploy:
-    name: Deploy
+    # Solo ejecuta si el workflow anterior fue exitoso
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
+    
+    # Configuración del environment para GitHub Pages
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     
+    # Permisos necesarios para GitHub Pages
+    permissions:
+      pages: write
+      id-token: write
+      contents: read
+    
     steps:
-      - name: Desplegar a GitHub Pages
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+        
+      - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v3  # ÚLTIMA VERSIÓN
+        uses: actions/deploy-pages@v4
