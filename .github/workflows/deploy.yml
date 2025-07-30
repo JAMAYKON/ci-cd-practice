@@ -25,14 +25,9 @@ jobs:
       - name: Subir archivos del sitio
         uses: actions/upload-artifact@v4
         with:
-          name: github-pages
-          path: './build'  # o ./dist, ./public, etc., según tu caso
-
-      - name: Desplegar en Pages
-        uses: actions/deploy-pages@v2
-
-        uses: actions/deploy-pages@v2
-
+          name: github-pages         # 👈 obligatorio para que deploy-pages lo detecte
+          path: '.'            # ⚠️ cambia a ./dist, ./public, o . según tu proyecto
+          retention-days: 1
 
       - name: Desplegar en Pages
         uses: actions/deploy-pages@v2
