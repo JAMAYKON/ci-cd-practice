@@ -18,9 +18,9 @@ jobs:
         uses: actions/configure-pages@v3
 
       - name: Subir archivos a Pages
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v2
         with:
-          path: '.'
+          path: '.'  
 
       - name: Desplegar en Pages
         uses: actions/deploy-pages@v2
