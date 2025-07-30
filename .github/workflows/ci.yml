@@ -2,10 +2,12 @@ name: CI Pipeline
 
 on: 
   push:
-    branches: [ main, master ]  # Solo se activa en estas ramas
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
 
 jobs:
-  build-and-preview:
+  build-and-test:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -15,37 +17,49 @@ jobs:
     steps:
       - name: Checkout código
         uses: actions/checkout@v4
-
+        
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'  # Versión específica recomendada
-
+          python-version: '3.11'
+          
       - name: Instalar dependencias
         run: |
           python -m pip install --upgrade pip
           pip install pytest
-
+          
       - name: Ejecutar tests
-        run: pytest
-
+        run: pytest --tb=short
+        continue-on-error: false
+        
       - name: Construir sitio
         run: |
           mkdir -p public
-          echo "<!doctype html>
+          cat > public/index.html << 'EOF'
+          <!doctype html>
           <html>
           <head>
             <meta charset='utf-8'>
-            <title>GitHub Pages</title>
+            <title>GitHub Pages - Despliegue Exitoso</title>
+            <style>
+              body { font-family: Arial, sans-serif; margin: 40px; }
+              h1 { color: #0366d6; }
+              .info { background: #f6f8fa; padding: 20px; border-radius: 6px; }
+            </style>
           </head>
           <body>
-            <h1>Despliegue exitoso</h1>
-            <p>Commit SHA: ${{ github.sha }}</p>
-            <p>Fecha: $(date)</p>
-          </html>" > public/index.html
-
-      - name: Subir artefacto
-        uses: actions/upload-pages-artifact@v2  # ÚNICA ACCIÓN RECOMENDADA PARA PAGES
+            <h1>🚀 Despliegue exitoso</h1>
+            <div class="info">
+              <p><strong>Commit SHA:</strong> ${{ github.sha }}</p>
+              <p><strong>Fecha:</strong> $(date -u +"%Y-%m-%d %H:%M:%S UTC")</p>
+              <p><strong>Rama:</strong> ${{ github.ref_name }}</p>
+              <p><strong>Repositorio:</strong> ${{ github.repository }}</p>
+            </div>
+          </body>
+          </html>
+          EOF
+          
+      - name: Subir artefacto para Pages
+        uses: actions/upload-pages-artifact@v3
         with:
-          path: '.'  # Ruta exacta del contenido
-          retention-days: 1
+          path: ./public
