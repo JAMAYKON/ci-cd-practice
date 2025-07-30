@@ -1,6 +1,6 @@
 name: CI Pipeline
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
   build:
@@ -22,14 +22,15 @@ jobs:
         run: |
           pytest
 
-      - name: Generar sitio estático (solo ejemplo)
+      - name: Generar contenido del sitio (simulado)
         run: |
           mkdir build
-          echo "<h1>Sitio desde CI</h1>" > build/index.html
+          echo "<h1>Desplegado desde CI</h1>" > build/index.html
 
-      - name: Subir artefacto para Pages
+      - name: Subir artefacto de GitHub Pages
         uses: actions/upload-artifact@v4
         with:
-          name: github-pages     # 👈 este nombre es crucial
-          path: build            # 👈 carpeta a desplegar
+          name: github-pages
+          path: build
           retention-days: 1
+
