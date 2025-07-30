@@ -1,6 +1,6 @@
 name: Deploy to GitHub Pages
 
-on: 
+on:
   workflow_run:
     workflows: ["CI Pipeline"]
     branches: [main, master]
@@ -27,8 +27,16 @@ jobs:
       pages: write
       id-token: write
       contents: read
+      actions: read
     
     steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+        
       - name: Setup Pages
         uses: actions/configure-pages@v3
         
