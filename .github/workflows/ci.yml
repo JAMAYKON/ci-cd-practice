@@ -1,0 +1,32 @@
+name: CI Pipeline
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Instalar dependencias
+        run: pip install pytest
+
+      - name: Ejecutar pruebas
+        run: pytest
+
+      - name: Generar contenido del sitio
+        run: |
+          mkdir -p build
+          echo "<h1>Sitio desplegado</h1>" > build/index.html
+          echo "<p>Versión: ${{ github.sha }}</p>" >> build/index.html
+
+      - name: Subir artefacto para Pages
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: build/
