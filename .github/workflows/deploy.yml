@@ -17,10 +17,15 @@ jobs:
       - name: Configurar GitHub Pages
         uses: actions/configure-pages@v3
 
-      - name: Subir archivos a Pages
-        uses: actions/upload-pages-artifact@v2
+      - name: Subir archivos del sitio
+        uses: actions/upload-artifact@v4
         with:
-          path: '.'  
+          name: github-pages
+          path: '.'  # Cambia si tu build sale en `dist` o `build`
+
+      - name: Desplegar en Pages
+        uses: actions/deploy-pages@v2
+
 
       - name: Desplegar en Pages
         uses: actions/deploy-pages@v2
